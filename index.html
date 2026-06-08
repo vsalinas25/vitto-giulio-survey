@@ -1034,7 +1034,6 @@ function submitAndFinish() {
   state.improveComment  = document.getElementById('improve-comment').value;
 
   const payload = {
-    timestamp:       new Date().toISOString(),
     session_id:      state.sessionId,
     nps_score:       state.npsScore,
     pizza_rating:    state.pizzaRating,
@@ -1042,10 +1041,10 @@ function submitAndFinish() {
     service_rating:  state.serviceRating,
     service_comment: state.serviceComment,
     first_visit:     state.firstVisit,
-    improve_comment:  state.improveComment,
-    nome:             state.clientName,
-    whatsapp:         state.clientWhatsapp,
-    premio_liberado:  !state.prizeBlocked,
+    improve_comment: state.improveComment,
+    nome:            state.clientName,
+    whatsapp:        state.clientWhatsapp,
+    premio_liberado: !state.prizeBlocked,
   };
 
   console.log('📋 Vitto & Giulio NPS Response:', payload);
@@ -1131,7 +1130,7 @@ async function verifyAndProceed() {
 
 async function submitToSupabase(payload) {
   try {
-    await fetch(`${SB_URL}/rest/v1/${SB_TABLE}`, {
+    const res = await fetch(`${SB_URL}/rest/v1/${SB_TABLE}`, {
       method: 'POST',
       headers: {
         apikey: SB_KEY,
@@ -1141,6 +1140,12 @@ async function submitToSupabase(payload) {
       },
       body: JSON.stringify(payload),
     });
+    if (!res.ok) {
+      const err = await res.text();
+      console.error('Supabase error:', res.status, err);
+    } else {
+      console.log('✅ Supabase save OK');
+    }
   } catch(e) {
     console.warn('Supabase save failed:', e);
   }
