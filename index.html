@@ -1112,12 +1112,15 @@ async function verifyAndProceed() {
     );
     const rows = await res.json();
     hideLoader();
+    console.log('🔍 Verify result:', JSON.stringify(rows));
 
     if (Array.isArray(rows) && rows.length > 0) {
       // Already received prize within block period — proceed but flag
       state.prizeBlocked = true;
+      console.log('🚫 Prize BLOCKED');
     } else {
       state.prizeBlocked = false;
+      console.log('✅ Prize ALLOWED');
     }
     goTo(2); // go to NPS
   } catch(e) {
